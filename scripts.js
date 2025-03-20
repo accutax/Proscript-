@@ -82,3 +82,9 @@ function generateDocument() {
     alert("Error generating document: " + error.message);
   });
 }
+# Make sure you're in your GitHub repository directory
+touch scripts.js
+# Copy the scripts.js code above into this file
+git add scripts.js
+git commit -m "Add scripts.js with correct backend URL"
+git push origin master
