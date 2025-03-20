@@ -199,3 +199,9 @@ function downloadDocument() {
     // 1. Either generate a PDF on the backend and download it
     // 2. Or use a library like jsPDF to create a PDF from the HTML content
 }
+// Change this endpoint in server.js
+app.post('/api/generate', (req, res) => {
+  // Your document generation logic
+});
+
+// To match what your frontend is expecting
