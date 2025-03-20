@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', function() {
     })
     .then(data => {
       console.log("Backend connection successful:", data);
+      alert("Backend connection successful! Server is running.");
     })
     .catch(error => {
       console.error("Backend connection failed:", error);
@@ -31,11 +32,10 @@ document.addEventListener('DOMContentLoaded', function() {
 function generateDocument() {
   // Get form values
   const documentType = document.getElementById('documentType').value;
-  const prompt = document.getElementById('promptInput')?.value || document.querySelector('textarea')?.value || "Sample document";
-  const includeCharts = document.getElementById('includeCharts')?.checked || false;
-  const includeImages = document.getElementById('includeImages')?.checked || false;
+  const promptInput = document.getElementById('promptInput');
+  const prompt = promptInput ? promptInput.value : document.querySelector('textarea').value;
   
-  console.log("Generating document with:", { documentType, prompt, includeCharts, includeImages });
+  console.log("Generating document with:", { documentType, prompt });
   
   // Show loading indicator
   const loadingOverlay = document.getElementById('loadingOverlay');
@@ -82,9 +82,3 @@ function generateDocument() {
     alert("Error generating document: " + error.message);
   });
 }
-# Make sure you're in your GitHub repository directory
-touch scripts.js
-# Copy the scripts.js code above into this file
-git add scripts.js
-git commit -m "Add scripts.js with correct backend URL"
-git push origin master
