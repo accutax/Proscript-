@@ -32,8 +32,8 @@ document.addEventListener('DOMContentLoaded', function() {
 function generateDocument() {
   // Get form values
   const documentType = document.getElementById('documentType').value;
-  const promptInput = document.getElementById('promptInput');
-  const prompt = promptInput ? promptInput.value : document.querySelector('textarea').value;
+  const promptInput = document.getElementById('promptInput') || document.querySelector('textarea');
+  const prompt = promptInput ? promptInput.value : "Sample document";
   
   console.log("Generating document with:", { documentType, prompt });
   
@@ -70,6 +70,21 @@ function generateDocument() {
     
     // Display the result
     alert("Document generated successfully!");
+    
+    // If there's a result container, show the document
+    const resultContainer = document.getElementById('resultContainer');
+    const resultPreview = document.getElementById('resultPreview');
+    
+    if (resultContainer && resultPreview) {
+      resultPreview.innerHTML = `
+        <div class="result-document">
+          <h1 class="document-title">${data.title}</h1>
+          <div class="document-content">${data.content.replace(/\n/g, '<br>')}</div>
+        </div>
+      `;
+      resultContainer.style.display = 'block';
+      resultContainer.scrollIntoView({ behavior: 'smooth' });
+    }
   })
   .catch(error => {
     console.error("Error generating document:", error);
