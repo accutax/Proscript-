@@ -6,6 +6,18 @@ document.addEventListener('DOMContentLoaded', function() {
   console.log("Document loaded, connecting to backend:", BACKEND_URL);
   
   // Test backend connection
+  testBackendConnection();
+  
+  // Add event listener to generate button
+  const generateBtn = document.getElementById('generateBtn');
+  if (generateBtn) {
+    generateBtn.addEventListener('click', generateDocument);
+  }
+});
+
+function testBackendConnection() {
+  console.log("Testing backend connection...");
+  
   fetch(`${BACKEND_URL}/api/health`)
     .then(response => {
       if (!response.ok) {
@@ -21,13 +33,7 @@ document.addEventListener('DOMContentLoaded', function() {
       console.error("Backend connection failed:", error);
       alert("Error connecting to backend: " + error.message);
     });
-  
-  // Add event listener to generate button
-  const generateBtn = document.getElementById('generateBtn');
-  if (generateBtn) {
-    generateBtn.addEventListener('click', generateDocument);
-  }
-});
+}
 
 function generateDocument() {
   // Get form values
@@ -70,21 +76,6 @@ function generateDocument() {
     
     // Display the result
     alert("Document generated successfully!");
-    
-    // If there's a result container, show the document
-    const resultContainer = document.getElementById('resultContainer');
-    const resultPreview = document.getElementById('resultPreview');
-    
-    if (resultContainer && resultPreview) {
-      resultPreview.innerHTML = `
-        <div class="result-document">
-          <h1 class="document-title">${data.title}</h1>
-          <div class="document-content">${data.content.replace(/\n/g, '<br>')}</div>
-        </div>
-      `;
-      resultContainer.style.display = 'block';
-      resultContainer.scrollIntoView({ behavior: 'smooth' });
-    }
   })
   .catch(error => {
     console.error("Error generating document:", error);
