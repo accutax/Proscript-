@@ -119,60 +119,66 @@ document.addEventListener('DOMContentLoaded', function() {
             });
     }
 
-    function generateDocument() {
-        const documentType = document.getElementById('documentType').value;
-        const prompt = document.getElementById('promptInput').value.trim();
-        const includeCharts = document.getElementById('includeCharts').checked;
-        const includeImages = document.getElementById('includeImages').checked;
-
-        if (!prompt) {
-            alert('Please describe your document');
-            return;
-        }
-
-        loadingOverlay.style.display = 'flex';
-        loadingText.textContent = 'Generating document...';
-
-        // Send request to backend
-        fetch(`${BACKEND_URL}/api/generate`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                documentType,
-                prompt,
-                includeCharts,
-                includeImages
-            })
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Failed to generate document');
-            }
-            return response.json();
-        })
-        .then(data => {
-            loadingOverlay.style.display = 'none';
-
-            if (data.content) {
-                resultPreview.innerHTML = data.content;
-                resultContainer.style.display = 'block';
-                resultContainer.scrollIntoView({ behavior: 'smooth' });
-                alert('Document generated successfully!');
-            } else {
-                throw new Error('No content received from server');
-            }
-        })
-        .catch(error => {
-            loadingOverlay.style.display = 'none';
-            console.error('Error generating document:', error);
-
-            // Fallback to client-side generation for demo purposes
-            generateDocumentFallback(documentType, prompt, includeCharts, includeImages);
-        });
+    // Modify this function in your scripts.js file
+function generateDocument(documentType, prompt, includeCharts, includeImages) {
+  console.log("Generating document with:", { documentType, prompt, includeCharts, includeImages });
+  
+  // Show loading indicator
+  const loadingOverlay = document.getElementById('loadingOverlay');
+  if (loadingOverlay) loadingOverlay.style.display = 'flex';
+  
+  // Send request to backend
+  return fetch(`${BACKEND_URL}/api/generate`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ documentType, prompt, includeCharts, includeImages })
+  })
+  .then(response => {
+    if (!response.ok) {
+      throw new Error(`Server responded with status: ${response.status}`);
     }
-
+    return response.json();
+  })
+  .then(data => {
+    console.log("Received data from server:", data);
+    
+    // Check if data has the expected structure
+    if (!data || !data.content) {
+      console.error('Invalid response structure:', data);
+      
+      // Create default content if missing
+      data = {
+        success: true,
+        content: {
+          title: `Generated ${documentType.replace(/-/g, ' ')}`,
+          body: `This is a generated document based on: ${prompt}`,
+          sections: [
+            {
+              heading: 'Default Content',
+              content: 'The server response was missing the expected content structure.'
+            }
+          ]
+        }
+      };
+      
+      // Log that we're using default content
+      console.log('Using default content due to invalid server response');
+    }
+    
+    // Hide loading indicator
+    if (loadingOverlay) loadingOverlay.style.display = 'none';
+    
+    return data;
+  })
+  .catch(error => {
+    console.error("Error generating document:", error);
+    
+    // Hide loading indicator
+    if (loadingOverlay) loadingOverlay.style.display = 'none';
+    
+    throw error;
+  });
+}
     function generateDocumentFallback(documentType, prompt, includeCharts, includeImages) {
         // This is a fallback function that generates content on the client side
         // when the backend is not available
