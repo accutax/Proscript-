@@ -337,3 +337,47 @@ function generateDocument(documentType, prompt, includeCharts, includeImages) {
     throw error;
   });
 }
+// In your scripts.js file
+function handleGenerateClick() {
+  const documentType = document.getElementById('documentType').value;
+  const prompt = document.getElementById('promptInput').value;
+  const includeCharts = document.getElementById('includeCharts')?.checked || false;
+  const includeImages = document.getElementById('includeImages')?.checked || false;
+  
+  // Show loading indicator
+  const loadingOverlay = document.getElementById('loadingOverlay');
+  if (loadingOverlay) loadingOverlay.style.display = 'flex';
+  
+  // Try to generate from backend
+  fetch(`${BACKEND_URL}/api/generate`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ documentType, prompt, includeCharts, includeImages })
+  })
+  .then(response => response.json())
+  .then(data => {
+    // Hide loading indicator
+    if (loadingOverlay) loadingOverlay.style.display = 'none';
+    
+    if (data && data.content) {
+      // Display the generated document
+      showResult(documentType, prompt, includeCharts, includeImages);
+    } else {
+      // Fallback to client-side generation
+      console.log("No content in response, using client-side fallback");
+      showResult(documentType, prompt, includeCharts, includeImages);
+    }
+  })
+  .catch(error => {
+    console.error("Error from backend:", error);
+    
+    // Hide loading indicator
+    if (loadingOverlay) loadingOverlay.style.display = 'none';
+    
+    // Fallback to client-side generation
+    console.log("Using client-side fallback generation");
+    showResult(documentType, prompt, includeCharts, includeImages);
+  });
+  
+  return false;
+}
