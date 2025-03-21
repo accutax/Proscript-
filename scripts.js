@@ -295,3 +295,45 @@ function handleGenerateClick() {
   
   return false;
 }
+// In your scripts.js file, update the document generation function
+function generateDocument(documentType, prompt, includeCharts, includeImages) {
+  console.log("Generating document with:", { documentType, prompt, includeCharts, includeImages });
+  
+  // Show loading indicator
+  const loadingOverlay = document.getElementById('loadingOverlay');
+  if (loadingOverlay) loadingOverlay.style.display = 'flex';
+  
+  // Send request to backend
+  return fetch(`${BACKEND_URL}/api/generate`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ documentType, prompt, includeCharts, includeImages })
+  })
+  .then(response => {
+    if (!response.ok) {
+      throw new Error(`Server responded with status: ${response.status}`);
+    }
+    return response.json();
+  })
+  .then(data => {
+    console.log("Received data from server:", data);
+    
+    // Check if data contains content
+    if (!data || !data.content) {
+      throw new Error('No content received from server');
+    }
+    
+    // Hide loading indicator
+    if (loadingOverlay) loadingOverlay.style.display = 'none';
+    
+    return data;
+  })
+  .catch(error => {
+    console.error("Error generating document:", error);
+    
+    // Hide loading indicator
+    if (loadingOverlay) loadingOverlay.style.display = 'none';
+    
+    throw error;
+  });
+}
