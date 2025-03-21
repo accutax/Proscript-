@@ -269,3 +269,29 @@ document.addEventListener('DOMContentLoaded', function() {
         alert(message);
     }
 });
+// In your scripts.js file
+function handleGenerateClick() {
+  const documentType = document.getElementById('documentType').value;
+  const prompt = document.getElementById('promptInput').value;
+  const includeCharts = document.getElementById('includeCharts')?.checked || false;
+  const includeImages = document.getElementById('includeImages')?.checked || false;
+  
+  // Try to generate from backend
+  generateDocument(documentType, prompt, includeCharts, includeImages)
+    .then(data => {
+      // Display the generated document
+      showResult(documentType, prompt, includeCharts, includeImages);
+    })
+    .catch(error => {
+      console.error("Error from backend:", error);
+      
+      // Fallback to client-side generation
+      console.log("Using client-side fallback generation");
+      showResult(documentType, prompt, includeCharts, includeImages);
+      
+      // Show error message
+      alert("Using offline document generation due to server error: " + error.message);
+    });
+  
+  return false;
+}
