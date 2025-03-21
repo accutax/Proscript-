@@ -374,3 +374,5 @@ window.useExamplePrompt = function(index) {
     promptInput.value = examplePrompts[index-1];
   }
 };
+// env.js
+const BACKEND_URL = 'https://proscript-44c78bc26a5f.herokuapp.com';
